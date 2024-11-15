@@ -33,41 +33,51 @@ export const AuthContext = createContext<{
 export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { pb } = usePocketBase();
+  // const { pb } = usePocketBase();
 
-  const [token, setToken] = useState(pb.authStore.token);
-  const [user, setUser] = useState(pb.authStore.model);
+  // const [token, setToken] = useState(pb.authStore.token);
+  // const [user, setUser] = useState(pb.authStore.model);
 
-  useEffect(() => {
-    return pb.authStore.onChange((token, model) => {
-      setToken(token);
-      setUser(model);
-    });
-  }, []);
+  // useEffect(() => {
+  //   return pb.authStore.onChange((token, model) => {
+  //     setToken(token);
+  //     setUser(model);
+  //   });
+  // }, []);
 
-  const refreshSession = useCallback(async () => {
-    if (!pb.authStore.isValid) return;
-    const decoded = jwtDecode(token);
-    const tokenExpiration = decoded.exp!;
-    const expirationWithBuffer =
-      (new Date().getTime() + fiveMinutesInMs) / 1000;
-    if (tokenExpiration < expirationWithBuffer) {
-      await pb.collection("users").authRefresh();
-    }
-  }, [token]);
+  // const refreshSession = useCallback(async () => {
+  //   if (!pb.authStore.isValid) return;
+  //   const decoded = jwtDecode(token);
+  //   const tokenExpiration = decoded.exp!;
+  //   const expirationWithBuffer =
+  //     (new Date().getTime() + fiveMinutesInMs) / 1000;
+  //   if (tokenExpiration < expirationWithBuffer) {
+  //     await pb.collection("users").authRefresh();
+  //   }
+  // }, [token]);
 
-  useInterval(refreshSession, token ? twoMinutesInMs : null);
+  // useInterval(refreshSession, token ? twoMinutesInMs : null);
 
-  const login = useCallback(async (email: string, password: string) => {
-    return await pb.collection("users").authWithPassword(email, password);
-  }, []);
+  // const login = useCallback(async (email: string, password: string) => {
+  //   return await pb.collection("users").authWithPassword(email, password);
+  // }, []);
 
-  const logout = useCallback(() => {
-    pb.authStore.clear();
-  }, []);
+  // const logout = useCallback(() => {
+  //   pb.authStore.clear();
+  // }, []);
 
+  //TODO: fix or create
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user: { name: "Test", photo: "" },
+        token: "",
+        login: async (u, e) => {
+          return {} as any;
+        },
+        logout: () => {},
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

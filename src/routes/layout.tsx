@@ -1,23 +1,18 @@
+import { AppSidebar } from "@/components/app/app-sidebar";
 import { LoginButton } from "@/components/ui/login-button";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Link, Outlet } from "react-router-dom";
 
 export function LayoutPage() {
   return (
-    <>
-      <nav className="flex h-[4rem] items-center p-4 backdrop-blur-sm">
-        <h1>
-          <Link to={"/"}>
-            Registro
-            <span className="rounded bg-slate-900 p-1 text-secondary">Zen</span>
-          </Link>
-        </h1>
-        <section className="flex grow justify-end">
-          <LoginButton />
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="w-full">
+        <SidebarTrigger className="ml-1" />
+        <section className="flex flex-col px-8 pt-8">
+          <Outlet />
         </section>
-      </nav>
-      <main className="flex flex-col px-8 pt-8">
-        <Outlet />
       </main>
-    </>
+    </SidebarProvider>
   );
 }

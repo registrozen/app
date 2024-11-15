@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "./avatar";
 import { useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
 
+//TODO: completa
 export function LoginButton() {
   const { user, logout } = useAuth();
 

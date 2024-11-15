@@ -4,30 +4,24 @@ import "@fontsource-variable/inter";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import { LayoutPage } from "./routes/layout";
-import { SignInPage } from "./routes/sign-in/page";
-import { AuthProvider, AuthRequired } from "./auth";
+import { AuthProvider } from "./auth";
 import { IndexPage } from "./routes/app/page";
 import { PocketBaseProvider } from "./pocketbase";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ClassesPage } from "./routes/app/classes/page";
 
 const router = createBrowserRouter([
-  {
-    path: "/sign-in",
-    element: <SignInPage />,
-  },
   {
     path: "/",
     element: <LayoutPage />,
     children: [
       {
-        path: "/",
-        element: <AuthRequired />,
-        children: [
-          {
-            index: true,
-            element: <IndexPage />,
-          },
-        ],
+        index: true,
+        element: <IndexPage />,
+      },
+      {
+        path: "classes",
+        element: <ClassesPage />,
       },
     ],
   },

@@ -9,7 +9,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useState } from "react";
-import { cn, useBodyOnKeyDown, useFocus } from "./lib/utils";
+import { cn, useBodyOnKeyDown, useFocus } from "../../lib/utils";
 
 export function AppCommandList({ modal }: { modal?: boolean }) {
   const [search, setSearch] = useState("");
@@ -44,32 +44,34 @@ export function AppCommandList({ modal }: { modal?: boolean }) {
       >
         <CommandEmpty>Nessun risultato trovato.</CommandEmpty>
         <CommandGroup heading="Messaggi">
-          <CommandItem>Invia</CommandItem>
-          <CommandItem>Visualizza</CommandItem>
-          <CommandItem>Configura</CommandItem>
+          <CommandItem>Apri Messaggi</CommandItem>
+          <CommandItem>Nuovo Messaggio</CommandItem>
         </CommandGroup>
         <CommandSeparator />
 
         <CommandGroup heading="Bacheca">
-          <CommandItem>Visualizza</CommandItem>
-          <CommandItem>Rispondi</CommandItem>
+          <CommandItem>Apri Bacheca</CommandItem>
+          <CommandItem>Rispondi ad Avviso</CommandItem>
         </CommandGroup>
         <CommandSeparator />
 
         <CommandGroup heading="Studenti">
           <CommandItem>Gestisci Presenza</CommandItem>
-          <CommandItem>Gestisci voti</CommandItem>
+          <CommandItem>Gestisci Voti</CommandItem>
         </CommandGroup>
         <CommandSeparator />
 
         <CommandGroup heading="Lezioni">
-          <CommandItem>Firma</CommandItem>
-          <CommandItem>Visualizza</CommandItem>
+          <CommandItem>Aggiungi Firma</CommandItem>
         </CommandGroup>
         <CommandSeparator />
 
         <CommandGroup heading="Classi">
-          <CommandItem>Visualizza</CommandItem>
+          <CommandItem>Apri Classi</CommandItem>
+        </CommandGroup>
+
+        <CommandGroup heading="Impostazioni">
+          <CommandItem>Apri Impostazioni</CommandItem>
         </CommandGroup>
         <CommandSeparator />
       </CommandList>
@@ -89,7 +91,7 @@ export function AppCommandDialog() {
   const [opened, setOpened] = useState(false);
 
   useBodyOnKeyDown((e) => {
-    if (e.ctrlKey && e.code === "KeyP" && !opened) {
+    if (e.ctrlKey && e.code === "KeyK" && !opened) {
       setOpened(true);
       e.preventDefault();
       e.stopPropagation();
