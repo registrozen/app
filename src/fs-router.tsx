@@ -26,51 +26,75 @@ export function createFilesystemRouter() {
       >,
     );
 
-  const routes: RouteObject[] = [];
-  const segments: { path: string; route: RouteObject }[] = [];
-  const errors: { path: string; Error: React.FC }[] = [];
-  for (let [path, pages] of Object.entries(paths)) {
-    const { page: Page, layout: Layout, error: Error } = pages;
-    let pathSegment: string;
-    do {
-      pathSegment = path.replace(new RegExp(`^${segments[0]?.path ?? ""}`), "");
-    } while (pathSegment === path && segments.shift());
+  const routes = Object.entries(paths).reduce(
+    (acc, [path, { page: Page, layout: Layout, error: Error }]) => {
+      let curPath: string;
+      let subPath: string;
+      do {
+        curPath = acc.stack[0]?.path ?? "";
+        subPath = path.replace(new RegExp(`^${curPath}`), "");
+      } while (subPath === path && acc.stack.shift());
 
-    pathSegment = pathSegment.replace(/\[([^\[\]]+)\]/g, ":$1");
+      subPath = subPath.replace(/\[([^\[\]]+)\]/g, ":$1");
 
-    while (errors.length > 0 && !path.startsWith(errors[0].path))
-      errors.shift();
-    if (Error) errors.unshift({ path, Error });
+      if (Layout && Error) {
+        const node: RouteObject = {
+          errorElement: <Error />,
+          children: [{ index: true, element: <Page /> }],
+        };
+        const route: RouteObject = {
+          path: subPath,
+          element: <Layout />,
+          children: [node],
+        };
 
-    const ErrorCmp = errors[0]?.Error;
-    if (Layout) {
-      let route: RouteObject = {
-        path: pathSegment,
-        element: <Layout />,
-        errorElement: ErrorCmp ? <ErrorCmp /> : undefined,
-        children: [{ index: true, element: <Page /> }],
-      };
+        if (acc.stack[0]) acc.stack[0].node.children?.push(route);
+        else acc.root.push(route);
 
-      if (segments[0]) segments[0].route.children?.push(route);
-      else routes.push(route);
+        acc.stack.unshift({ path, node });
+      } else if (Layout) {
+        const route: RouteObject = {
+          path: subPath,
+          element: <Layout />,
+          children: [{ index: true, element: <Page /> }],
+        };
 
-      if (!route.errorElement)
-        route.errorElement = segments[0]?.route?.errorElement;
+        if (acc.stack[0]) acc.stack[0].node.children?.push(route);
+        else acc.root.push(route);
 
-      segments.unshift({ path: path.endsWith("/") ? path : `${path}/`, route });
-    } else {
-      let route: RouteObject = {
-        path: pathSegment,
-        element: <Page />,
-        errorElement: ErrorCmp ? <ErrorCmp /> : undefined,
-      };
-      if (segments[0]) segments[0].route.children?.push(route);
-      else routes.push(route);
+        acc.stack.unshift({ path, node: route });
+      } else if (Error) {
+        const route: RouteObject = {
+          path: subPath,
+          errorElement: <Error />,
+          children: [{ index: true, element: <Page /> }],
+        };
 
-      if (!route.errorElement)
-        route.errorElement = segments[0]?.route?.errorElement;
-    }
-  }
+        if (acc.stack[0]) acc.stack[0].node.children?.push(route);
+        else acc.root.push(route);
 
-  return createBrowserRouter(routes);
+        acc.stack.unshift({ path, node: route });
+      } else {
+        const route: RouteObject = {
+          path: subPath,
+          element: <Page />,
+          children: [{ index: true, element: <Page /> }],
+        };
+
+        if (acc.stack[0]) acc.stack[0].node.children?.push(route);
+        else acc.root.push(route);
+      }
+
+      return acc;
+    },
+    {
+      stack: [],
+      root: [],
+    } as {
+      root: RouteObject[];
+      stack: { path: string; node: RouteObject }[];
+    },
+  );
+
+  return createBrowserRouter(routes.root);
 }
