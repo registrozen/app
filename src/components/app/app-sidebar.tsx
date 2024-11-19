@@ -17,36 +17,75 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from "../ui/sidebar";
-import { NavClasses } from "./nav-classes";
-import { useClassesStore } from "@/stores/classes";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { Logo } from "../ui/logo";
+import {
+  CirclePause,
+  ClipboardList,
+  ListTodo,
+  Mail,
+  Star,
+  UserRound,
+} from "lucide-react";
+import { NavStarred } from "./nav-starred";
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const { classes, otherClasses } = useClassesStore();
+  const { pathname } = useLocation();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <NavLink to="/">
-          {state === "collapsed" ? (
-            <h1>
-              R
-              <span className="rounded bg-slate-900 p-1 text-secondary">Z</span>
-            </h1>
-          ) : (
-            <h1>
-              Registro
-              <span className="rounded bg-slate-900 p-1 text-secondary">
-                Zen
-              </span>
-            </h1>
-          )}
+          <Logo collapsed={state === "collapsed"} />
         </NavLink>
       </SidebarHeader>
       <SidebarContent>
-        <NavClasses classes={classes} otherClasses={otherClasses} />
+        <SidebarGroup>
+          <SidebarGroupLabel>Registro</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={{ children: "Classi", hidden: state === "expanded" }}
+                  isActive={pathname.startsWith("/classes")}
+                >
+                  <NavLink to="classes">
+                    <UserRound />
+                    <span>Classi</span>
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={{
+                    children: "Bacheca",
+                    hidden: state === "expanded",
+                  }}
+                  isActive={pathname.startsWith("/board")}
+                >
+                  <NavLink to="board">
+                    <ClipboardList />
+                    <span>Bacheca</span>
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <Mail />
+                  <span>Messaggi</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser

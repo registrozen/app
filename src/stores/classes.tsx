@@ -1,4 +1,4 @@
-import { Class } from "@/types/classes";
+import { Class } from "@/types/model";
 import { create } from "zustand";
 
 export type ClassesState = {
